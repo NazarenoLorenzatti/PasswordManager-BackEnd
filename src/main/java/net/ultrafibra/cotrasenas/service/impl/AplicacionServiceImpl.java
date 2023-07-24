@@ -39,7 +39,7 @@ public class AplicacionServiceImpl implements iAplicacionService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<AplicacionResponseRest> buscarAplicacionPorId(Aplicacion aplicacion) {
+    public ResponseEntity<AplicacionResponseRest> buscarAplicacion(Aplicacion aplicacion) {
         AplicacionResponseRest respuesta = new AplicacionResponseRest();
         List<Aplicacion> listaAplicaciones = new ArrayList<>();
         try {
@@ -126,6 +126,28 @@ public class AplicacionServiceImpl implements iAplicacionService {
                 return new ResponseEntity<>(respuesta, HttpStatus.NOT_FOUND);
             }
 
+        } catch (Exception e) {
+            respuesta.setMetadata("Respuesta nok", "-1", "Error al consultar");
+            e.getStackTrace();
+            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(respuesta, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<AplicacionResponseRest> buscarAplicacionPorId(Long idAplicacion) {
+        AplicacionResponseRest respuesta = new AplicacionResponseRest();
+        List<Aplicacion> listaAplicaciones = new ArrayList<>();
+        try {
+            Optional<Aplicacion> aplicacionOptional = aplicacionDao.findById(idAplicacion);
+            if (aplicacionOptional.isPresent()) {
+                listaAplicaciones.add(aplicacionOptional.get());
+                respuesta.getApliacionResponse().setAplicacion(listaAplicaciones);
+                respuesta.setMetadata("Respuesta ok", "00", "Apliacion encontrada");
+            } else {
+                respuesta.setMetadata("Respuesta nok", "-1", "No se encontro la aplicacion");
+                return new ResponseEntity<>(respuesta, HttpStatus.NOT_FOUND);
+            }
         } catch (Exception e) {
             respuesta.setMetadata("Respuesta nok", "-1", "Error al consultar");
             e.getStackTrace();

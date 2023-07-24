@@ -39,11 +39,11 @@ public class AdministrativoServiceImpl implements iAdministrativoService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<AdministrativoResponseRest> buscarAdministrativoPorId(Administrativo administrativo) {
+    public ResponseEntity<AdministrativoResponseRest> buscarAdministrativoPorId(Long idAdministrativo) {
         AdministrativoResponseRest respuesta = new AdministrativoResponseRest();
         List<Administrativo> listaAdministrativos = new ArrayList<>();
         try {
-            Optional<Administrativo> administrativoOptional = administrativoDao.findById(administrativo.getIdAdministrativo());
+            Optional<Administrativo> administrativoOptional = administrativoDao.findById(idAdministrativo);
             if (administrativoOptional.isPresent()) {
                 listaAdministrativos.add(administrativoOptional.get());
                 respuesta.getAdministrativoResponse().setAdministrativo(listaAdministrativos);
@@ -136,6 +136,29 @@ public class AdministrativoServiceImpl implements iAdministrativoService {
             return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<AdministrativoResponseRest> buscarAdministrativo(Administrativo administrativo) {
+       AdministrativoResponseRest respuesta = new AdministrativoResponseRest();
+        List<Administrativo> listaAdministrativos = new ArrayList<>();
+        try {
+            Optional<Administrativo> administrativoOptional = administrativoDao.findById(administrativo.getIdAdministrativo());
+            if (administrativoOptional.isPresent()) {
+                listaAdministrativos.add(administrativoOptional.get());
+                respuesta.getAdministrativoResponse().setAdministrativo(listaAdministrativos);
+                respuesta.setMetadata("Respuesta ok", "00", "Administrativo encontrado");
+            } else {
+                respuesta.setMetadata("Respuesta nok", "-1", "No se encontro el Administrativo");
+                return new ResponseEntity<>(respuesta, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            respuesta.setMetadata("Respuesta nok", "-1", "Error al consultar");
+            e.getStackTrace();
+            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(respuesta, HttpStatus.OK);
+        
     }
 
 }

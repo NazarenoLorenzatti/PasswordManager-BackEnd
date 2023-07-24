@@ -8,7 +8,9 @@ public interface iCredencialService {
 
     public ResponseEntity<CredencialResponseRest> listarCredenciales();
 
-    public ResponseEntity<CredencialResponseRest> buscarCredencialPorId(Credencial credencial);
+    public ResponseEntity<CredencialResponseRest> buscarCredencial(Credencial credencial);
+    
+    public ResponseEntity<CredencialResponseRest> buscarCredencialPorId(Long idCredencial);
 
     public ResponseEntity<CredencialResponseRest> nuevaCredencial(Credencial credencial);
 

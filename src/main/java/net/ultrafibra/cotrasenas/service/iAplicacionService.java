@@ -8,7 +8,9 @@ public interface iAplicacionService {
 
     public ResponseEntity<AplicacionResponseRest> listarAplicaciones();
 
-    public ResponseEntity<AplicacionResponseRest> buscarAplicacionPorId(Aplicacion aplicacion);
+    public ResponseEntity<AplicacionResponseRest> buscarAplicacion(Aplicacion aplicacion);
+    
+    public ResponseEntity<AplicacionResponseRest> buscarAplicacionPorId(Long idAplicacion);
 
     public ResponseEntity<AplicacionResponseRest> guardarAplicacion(Aplicacion aplicacion);
 

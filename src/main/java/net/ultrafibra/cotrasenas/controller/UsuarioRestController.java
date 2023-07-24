@@ -37,7 +37,7 @@ public class UsuarioRestController {
      */
     @PostMapping("/actualizar-usuario")
     public ResponseEntity<UsuarioResponseRest> actualizarUsuario(@RequestBody Usuario usuario) throws Exception {
-        ResponseEntity<UsuarioResponseRest> respuesta = usuarioService.guardarUsuario(usuario);
+        ResponseEntity<UsuarioResponseRest> respuesta = usuarioService.actualizarUsuario(usuario);
         return respuesta;
     }
 

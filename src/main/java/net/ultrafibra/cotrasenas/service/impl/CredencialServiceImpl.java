@@ -50,7 +50,7 @@ public class CredencialServiceImpl implements iCredencialService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<CredencialResponseRest> buscarCredencialPorId(Credencial credencial) {
+    public ResponseEntity<CredencialResponseRest> buscarCredencial(Credencial credencial) {
         CredencialResponseRest respuesta = new CredencialResponseRest();
         List<Credencial> listaCredenciales = new ArrayList<>();
         try {
@@ -227,6 +227,28 @@ public class CredencialServiceImpl implements iCredencialService {
             return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+        return new ResponseEntity<>(respuesta, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<CredencialResponseRest> buscarCredencialPorId(Long idCredencial) {
+        CredencialResponseRest respuesta = new CredencialResponseRest();
+        List<Credencial> listaCredenciales = new ArrayList<>();
+        try {
+            Optional<Credencial> credencialOptional = credencialDao.findById(idCredencial);
+            if (credencialOptional.isPresent()) {
+                listaCredenciales.add(credencialOptional.get());
+                respuesta.getCredencialResponse().setCredencial(listaCredenciales);
+                respuesta.setMetadata("Respuesta ok", "00", "Credencial por Id encontrada");
+            } else {
+                respuesta.setMetadata("Respuesta nok", "-1", "No se encontro la Credencial");
+                return new ResponseEntity<>(respuesta, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            respuesta.setMetadata("Respuesta nok", "-1", "Error al consultar");
+            e.getStackTrace();
+            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
 
