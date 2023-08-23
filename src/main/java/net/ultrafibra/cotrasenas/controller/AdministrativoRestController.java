@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-//@CrossOrigin(origins = {"http://localhost:4200"})
-@RequestMapping("/api/v1")
+@CrossOrigin(origins = {"http://localhost:4200"})
+@RequestMapping("/api/v1/administrativo")
 public class AdministrativoRestController {
 
     @Autowired
@@ -35,7 +35,7 @@ public class AdministrativoRestController {
      * @return
      * @throws Exception
      */
-    @PostMapping("/editar-administrativo")
+    @PutMapping("/editar-administrativo")
     public ResponseEntity<AdministrativoResponseRest> editarAdministrativo(@RequestBody Administrativo administrativo) throws Exception {
         ResponseEntity<AdministrativoResponseRest> respuesta = administrativoService.editarAdministrativo(administrativo);
         return respuesta;
@@ -74,7 +74,7 @@ public class AdministrativoRestController {
      * @return
      * @throws Exception 
      */
-    @GetMapping("/eliminar-administrativo/{id}")
+    @DeleteMapping("/eliminar-administrativo/{id}")
     public ResponseEntity<AdministrativoResponseRest> eliminarAdministrativo(@PathVariable Long id) throws Exception {
         ResponseEntity<AdministrativoResponseRest> respuesta = administrativoService.eliminarAdministrativo(id);
         return respuesta;

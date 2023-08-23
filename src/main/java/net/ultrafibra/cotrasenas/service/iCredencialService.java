@@ -11,6 +11,8 @@ public interface iCredencialService {
     public ResponseEntity<CredencialResponseRest> buscarCredencial(Credencial credencial);
     
     public ResponseEntity<CredencialResponseRest> buscarCredencialPorId(Long idCredencial);
+    
+    public ResponseEntity<CredencialResponseRest> buscarCredencialPorAdministrativo(Long idAdministrativo);
 
     public ResponseEntity<CredencialResponseRest> nuevaCredencial(Credencial credencial);
 

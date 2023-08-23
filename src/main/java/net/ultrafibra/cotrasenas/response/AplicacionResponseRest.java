@@ -7,6 +7,6 @@ import lombok.*;
 @Setter
 public class AplicacionResponseRest extends ResponseRest {
 
-    private AplicacionResponse apliacionResponse = new AplicacionResponse();
+    private AplicacionResponse aplicacionResponse = new AplicacionResponse();
     
 }

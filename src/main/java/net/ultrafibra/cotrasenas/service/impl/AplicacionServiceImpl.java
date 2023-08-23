@@ -27,7 +27,7 @@ public class AplicacionServiceImpl implements iAplicacionService {
         AplicacionResponseRest respuesta = new AplicacionResponseRest();
         try {
             List<Aplicacion> aplicaciones = (List<Aplicacion>) aplicacionDao.findAll();
-            respuesta.getApliacionResponse().setAplicacion(aplicaciones);
+            respuesta.getAplicacionResponse().setAplicacion(aplicaciones);
             respuesta.setMetadata("Respuesta ok", "00", "Lista de Aplicaciones cargados");
         } catch (Exception e) {
             respuesta.setMetadata("Respuesta nok", "-1", "Error al consultar");
@@ -46,7 +46,7 @@ public class AplicacionServiceImpl implements iAplicacionService {
             Optional<Aplicacion> aplicacionOptional = aplicacionDao.findById(aplicacion.getIdAplicacion());
             if (aplicacionOptional.isPresent()) {
                 listaAplicaciones.add(aplicacionOptional.get());
-                respuesta.getApliacionResponse().setAplicacion(listaAplicaciones);
+                respuesta.getAplicacionResponse().setAplicacion(listaAplicaciones);
                 respuesta.setMetadata("Respuesta ok", "00", "Apliacion encontrada");
             } else {
                 respuesta.setMetadata("Respuesta nok", "-1", "No se encontro la aplicacion");
@@ -69,7 +69,7 @@ public class AplicacionServiceImpl implements iAplicacionService {
             Aplicacion aplicacionGuardada = aplicacionDao.save(aplicacion);
             if (aplicacionGuardada != null) {
                 listaAplicaciones.add(aplicacionGuardada);
-                respuesta.getApliacionResponse().setAplicacion(listaAplicaciones);
+                respuesta.getAplicacionResponse().setAplicacion(listaAplicaciones);
                 respuesta.setMetadata("Respuesta ok", "00", "Aplicacion Guardada");
             } else {
                 respuesta.setMetadata("Respuesta nok", "-1", "No se pudo guardar la aplicacion");
@@ -115,7 +115,7 @@ public class AplicacionServiceImpl implements iAplicacionService {
 
                 if (aplicacionEditada != null) {
                     listaAplicaciones.add(aplicacionEditada);
-                    respuesta.getApliacionResponse().setAplicacion(listaAplicaciones);
+                    respuesta.getAplicacionResponse().setAplicacion(listaAplicaciones);
                     respuesta.setMetadata("Respuesta ok", "00", "Aplicacion Editada");
                 } else {
                     respuesta.setMetadata("Respuesta nok", "-1", "No se pudo editar la aplicacion");
@@ -142,7 +142,7 @@ public class AplicacionServiceImpl implements iAplicacionService {
             Optional<Aplicacion> aplicacionOptional = aplicacionDao.findById(idAplicacion);
             if (aplicacionOptional.isPresent()) {
                 listaAplicaciones.add(aplicacionOptional.get());
-                respuesta.getApliacionResponse().setAplicacion(listaAplicaciones);
+                respuesta.getAplicacionResponse().setAplicacion(listaAplicaciones);
                 respuesta.setMetadata("Respuesta ok", "00", "Apliacion encontrada");
             } else {
                 respuesta.setMetadata("Respuesta nok", "-1", "No se encontro la aplicacion");

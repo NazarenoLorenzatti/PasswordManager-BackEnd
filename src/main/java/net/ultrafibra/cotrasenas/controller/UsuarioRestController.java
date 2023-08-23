@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-//@CrossOrigin(origins = {"http://localhost:4200"})
-@RequestMapping("/api/v1")
+@CrossOrigin(origins = {"http://localhost:4200"})
+@RequestMapping("/api/v1/usuario")
 public class UsuarioRestController {
 
     @Autowired
@@ -35,7 +35,7 @@ public class UsuarioRestController {
      * @return
      * @throws Exception
      */
-    @PostMapping("/actualizar-usuario")
+    @PutMapping("/actualizar-usuario")
     public ResponseEntity<UsuarioResponseRest> actualizarUsuario(@RequestBody Usuario usuario) throws Exception {
         ResponseEntity<UsuarioResponseRest> respuesta = usuarioService.actualizarUsuario(usuario);
         return respuesta;
@@ -74,7 +74,7 @@ public class UsuarioRestController {
      * @return
      * @throws Exception 
      */
-    @GetMapping("/eliminar-usuario/{id}")
+    @DeleteMapping("/eliminar-usuario/{id}")
     public ResponseEntity<UsuarioResponseRest> eliminarUsuario(@PathVariable Long id) throws Exception {
         ResponseEntity<UsuarioResponseRest> respuesta = usuarioService.eliminarUsuarioPorId(id);
         return respuesta;
@@ -86,7 +86,7 @@ public class UsuarioRestController {
      * @return
      * @throws Exception 
      */
-    @PostMapping("/eliminar-usuario")
+    @DeleteMapping("/eliminar-usuario")
     public ResponseEntity<UsuarioResponseRest> eliminarUsuario(@RequestBody Usuario usuario) throws Exception {
         ResponseEntity<UsuarioResponseRest> respuesta = usuarioService.eliminarUsuario(usuario);
         return respuesta;

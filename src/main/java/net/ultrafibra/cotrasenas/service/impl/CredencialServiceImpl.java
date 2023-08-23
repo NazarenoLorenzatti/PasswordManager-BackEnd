@@ -7,6 +7,7 @@ import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import net.ultrafibra.cotrasenas.dao.*;
 import net.ultrafibra.cotrasenas.excepciones.*;
+import net.ultrafibra.cotrasenas.model.Administrativo;
 import net.ultrafibra.cotrasenas.model.Credencial;
 import net.ultrafibra.cotrasenas.response.CredencialResponseRest;
 import net.ultrafibra.cotrasenas.service.iCredencialService;
@@ -25,6 +26,9 @@ public class CredencialServiceImpl implements iCredencialService {
 
     @Autowired
     private iEstadoCredencialDao estadoDao;
+
+    @Autowired
+    private iAdministrativoDao administrativoDao;
 
     @Autowired
     private EmailService emailService;
@@ -104,7 +108,7 @@ public class CredencialServiceImpl implements iCredencialService {
             if (credencialOptional.isPresent()) {
 
                 credencialOptional.get().setUsuario(credencial.getUsuario());
-                credencialOptional.get().setContraseña(credencial.getContraseña());
+                credencialOptional.get().setContra(credencial.getContra());
                 credencialOptional.get().setEstadoCredencial(estadoDao.findByNombreCredencial("VIGENTE"));
                 credencialOptional.get().setUltimaActualizacion(Date.valueOf(LocalDate.now()));
                 credencialOptional.get().setProximaActualizacion(Date.valueOf(LocalDate.now().plusDays(60)));
@@ -139,7 +143,7 @@ public class CredencialServiceImpl implements iCredencialService {
             Optional<Credencial> credencialOptional = credencialDao.findById(credencial.getIdCredencial());
             if (credencialOptional.isPresent()) {
 
-                credencialOptional.get().setContraseña(credencial.getContraseña());
+                credencialOptional.get().setContra(credencial.getContra());
                 credencialOptional.get().setEstadoCredencial(estadoDao.findByNombreCredencial("VIGENTE"));
                 credencialOptional.get().setUltimaActualizacion(Date.valueOf(LocalDate.now()));
                 credencialOptional.get().setProximaActualizacion(Date.valueOf(LocalDate.now().plusDays(60)));
@@ -204,12 +208,12 @@ public class CredencialServiceImpl implements iCredencialService {
                     // ENVIO DE ALERTA POR SMS
                     try {
                         smsService.enviarMensaje("Su contraseña de la aplicacion " + c.getAplicacion().getNombreAplicacion() + " Requiere una actualizacion", c.getAdministrativo().getTelefono());
-                    }catch (SMSException e) {
+                    } catch (SMSException e) {
                         respuesta.setMetadata("Respuesta nok", "-1", "Error al enviar el SMS");
                         e.printStackTrace();
                         return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-                    }                                               
-                    
+                    }
+
                     Credencial credencialAlerta = credencialDao.save(c);
                     if (credencialAlerta != null) {
                         listaCredenciales.add(credencialAlerta);
@@ -252,4 +256,19 @@ public class CredencialServiceImpl implements iCredencialService {
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
 
-  }
+    @Override
+    public ResponseEntity<CredencialResponseRest> buscarCredencialPorAdministrativo(Long idAdministrativo) {
+        CredencialResponseRest respuesta = new CredencialResponseRest();
+        Administrativo adm = administrativoDao.findById(idAdministrativo).get();
+        try {
+            List<Credencial> credenciales = credencialDao.findByAdministrativo(adm);
+            respuesta.getCredencialResponse().setCredencial(credenciales);
+            respuesta.setMetadata("Respuesta ok", "00", "Lista de Credenciales cargados");
+        } catch (Exception e) {
+            respuesta.setMetadata("Respuesta nok", "-1", "Error al consultar");
+            e.getStackTrace();
+            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(respuesta, HttpStatus.OK);
+    }
+}

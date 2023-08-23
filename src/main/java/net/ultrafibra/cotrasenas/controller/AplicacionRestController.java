@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@RestController
+@CrossOrigin(origins = {"http://localhost:4200"})
+@RequestMapping("/api/v1/aplicacion")
 public class AplicacionRestController {
     
     @Autowired
@@ -32,7 +35,7 @@ public class AplicacionRestController {
      * @return
      * @throws Exception
      */
-    @PostMapping("/editar-aplicacion")
+    @PutMapping("/editar-aplicacion")
     public ResponseEntity<AplicacionResponseRest> editarAplicacion(@RequestBody Aplicacion aplicacion) throws Exception {
         ResponseEntity<AplicacionResponseRest> respuesta = aplicacionService.editarAplicacion(aplicacion);
         return respuesta;
@@ -83,7 +86,7 @@ public class AplicacionRestController {
      * @return
      * @throws Exception 
      */
-    @GetMapping("/eliminar-aplicacion/{id}")
+    @DeleteMapping("/eliminar-aplicacion/{id}")
     public ResponseEntity<AplicacionResponseRest> eliminarAplicacion(@PathVariable Long id) throws Exception {
         ResponseEntity<AplicacionResponseRest> respuesta = aplicacionService.eliminarAplicacion(id);
         return respuesta;

@@ -1,5 +1,6 @@
 package net.ultrafibra.cotrasenas.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.*;
@@ -22,6 +23,7 @@ public class Aplicacion implements Serializable {
     
     private String url;
     
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "administrativos_en_aplicaciones",

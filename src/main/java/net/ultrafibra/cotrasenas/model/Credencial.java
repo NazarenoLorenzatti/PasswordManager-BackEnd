@@ -18,8 +18,9 @@ public class Credencial implements Serializable {
     private Long idCredencial;
 
     private String usuario;
-
-    private String contraseña;
+    
+    @Column(name = "contraseña")
+    private String contra;
 
     @Column(name = "ultima_actualizacion")
     private Date ultimaActualizacion;
@@ -44,7 +45,7 @@ public class Credencial implements Serializable {
 
     public Credencial(String usuario, String contraseña, Date ultimaActualizacion, Date proximaActualizacion, Aplicacion aplicacion, EstadoCredencial estadoCredencial) {
         this.usuario = usuario;
-        this.contraseña = contraseña;
+        this.contra = contraseña;
         this.ultimaActualizacion = ultimaActualizacion;
         this.proximaActualizacion = proximaActualizacion;
         this.aplicacion = aplicacion;
