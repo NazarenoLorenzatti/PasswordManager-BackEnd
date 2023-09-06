@@ -18,6 +18,16 @@ public class Rol implements Serializable {
     private Long idRol;
 
     @NotEmpty
-    private String nombre_rol;
+    @Column(name = "nombre_rol")
+    private String nombreRol;
 
+    public Rol(String nombreRol) {
+        this.nombreRol = nombreRol;
+    }
+
+    public Rol() {
+    }
+    
+    
+    
 }

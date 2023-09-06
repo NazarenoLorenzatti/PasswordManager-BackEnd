@@ -35,7 +35,7 @@ public class CredencialRestController {
      * @return
      * @throws Exception
      */
-    @PostMapping("/editar-credencial")
+    @PutMapping("/editar-credencial")
     public ResponseEntity<CredencialResponseRest> editarCredencial(@RequestBody Credencial credencial) throws Exception {
         ResponseEntity<CredencialResponseRest> respuesta = credencialService.editarCredencial(credencial);
         return respuesta;

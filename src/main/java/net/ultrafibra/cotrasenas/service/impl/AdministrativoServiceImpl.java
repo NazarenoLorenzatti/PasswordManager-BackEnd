@@ -113,7 +113,6 @@ public class AdministrativoServiceImpl implements iAdministrativoService {
                 administrativoOptional.get().setNombre(administrativo.getNombre());
                 administrativoOptional.get().setTelefono(administrativo.getTelefono());
                 administrativoOptional.get().setEmail(administrativo.getEmail());
-                administrativoOptional.get().setAplicaciones(administrativo.getAplicaciones());
 
                 Administrativo administrativoActualizado = administrativoDao.save(administrativoOptional.get());
 

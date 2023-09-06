@@ -109,8 +109,6 @@ public class AplicacionServiceImpl implements iAplicacionService {
 
                 aplicacionOptional.get().setNombreAplicacion(aplicacion.getNombreAplicacion());
                 aplicacionOptional.get().setUrl(aplicacion.getUrl());
-                aplicacionOptional.get().setAdministrativos(aplicacion.getAdministrativos());
-
                 Aplicacion aplicacionEditada = aplicacionDao.save(aplicacionOptional.get());
 
                 if (aplicacionEditada != null) {

@@ -81,6 +81,9 @@ public class CredencialServiceImpl implements iCredencialService {
         CredencialResponseRest respuesta = new CredencialResponseRest();
         List<Credencial> listaCredenciales = new ArrayList<>();
         try {
+            credencial.setEstadoCredencial(estadoDao.findByNombreCredencial("VIGENTE"));
+            credencial.setUltimaActualizacion(Date.valueOf(LocalDate.now()));
+            credencial.setProximaActualizacion(Date.valueOf(LocalDate.now().plusDays(60)));
             Credencial credencialNueva = credencialDao.save(credencial);
             if (credencialNueva != null) {
                 listaCredenciales.add(credencialNueva);

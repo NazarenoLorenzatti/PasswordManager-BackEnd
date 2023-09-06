@@ -1,9 +1,7 @@
 package net.ultrafibra.cotrasenas.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.io.Serializable;
-import java.util.*;
 import lombok.Data;
 
 @Entity
@@ -21,16 +19,7 @@ public class Aplicacion implements Serializable {
     @Column(name = "nombre_aplicacion")
     private String nombreAplicacion;
     
-    private String url;
-    
-    @JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "administrativos_en_aplicaciones",
-            joinColumns = @JoinColumn(name = "aplicaciones_id_aplicacion"),
-            inverseJoinColumns = @JoinColumn(name =  "administrativos_id_administrativo")
-    )
-    private List<Administrativo> administrativos = new ArrayList();
+    private String url;   
 
     public Aplicacion() {
     }
@@ -40,7 +29,5 @@ public class Aplicacion implements Serializable {
         this.nombreAplicacion = nombreAplicacion;
         this.url = url;
     }
-    
-    
     
 }

@@ -11,7 +11,7 @@ import net.ultrafibra.cotrasenas.service.iUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +25,11 @@ public class UsuarioServiceImpl implements iUsuarioService {
     @Autowired
     private iRolesDao rolesDao;
 
-//    public static String encriptarPassword(String password) {
-//        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-//        return encoder.encode(password);
-//    }
+    public static String encriptarPassword(String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.encode(password);
+    }
+
     @Override
     @Transactional(readOnly = true)
     public ResponseEntity<UsuarioResponseRest> listarUsuarios() {
@@ -79,8 +80,19 @@ public class UsuarioServiceImpl implements iUsuarioService {
                 respuesta.getUsuarioResponse().setUsuario(listaUsuarios);
                 respuesta.setMetadata("Respuesta ok", "00", "EL USUARIO YA EXISTE");
             } else {
-//               usuario.setPassword(encriptarPassword(usuario.getPassword())); // Encripto el password antes de guardarlo.
-                Usuario usuarioGuardado = usuarioDao.save(usuario);
+                usuario.setPassword(encriptarPassword(usuario.getPassword())); // Encripto el password antes de guardarlo.
+                List<Rol> roles = new ArrayList();
+                for(Rol r : usuario.getRoles()){
+                    if(r.getIdRol() != null){
+                         roles.add(rolesDao.findById(r.getIdRol()).get());
+                    } else if(r.getNombreRol() != null){
+                         roles.add(rolesDao.findByNombreRol(r.getNombreRol()));
+                    } else if (r.getIdRol() == null && r.getNombreRol() == null ){
+                         roles.add(rolesDao.findByNombreRol("ROLE_USER"));
+                    }
+                }               
+                usuario.setRoles(roles);
+                Usuario usuarioGuardado = usuarioDao.save(new Usuario(usuario.getUsername(), usuario.getPassword(), roles));
                 if (usuarioGuardado != null) {
                     listaUsuarios.add(usuarioGuardado);
                     respuesta.getUsuarioResponse().setUsuario(listaUsuarios);
@@ -106,7 +118,7 @@ public class UsuarioServiceImpl implements iUsuarioService {
         try {
             Optional<Usuario> usuarioOptional = usuarioDao.findById(usuario.getIdUsuario());
             if (usuarioOptional.isPresent()) {
-                usuarioOptional.get().setPassword(usuario.getPassword());
+                usuarioOptional.get().setPassword(encriptarPassword(usuario.getPassword()));
                 usuarioOptional.get().setUsername(usuario.getUsername());
                 Usuario usuarioActualizado = usuarioDao.save(usuarioOptional.get());
                 if (usuarioActualizado != null) {
