@@ -1,5 +1,6 @@
 package net.ultrafibra.cotrasenas.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.*;
@@ -23,6 +24,9 @@ public class Usuario implements Serializable {
     @NotEmpty
     private String password;
 
+    @NotEmpty
+    private Integer pin;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "usuario_has_rol",
@@ -30,6 +34,10 @@ public class Usuario implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "rol_id_rol")
     )
     private List<Rol> roles;
+
+    @OneToOne(mappedBy = "usuario")
+    @JsonIgnore
+    private Administrativo administrativo;
 
     public Usuario(String username, String password, List<Rol> roles) {
         this.username = username;

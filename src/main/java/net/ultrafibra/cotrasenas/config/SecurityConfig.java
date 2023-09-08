@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .cors().and()
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests()
-                .requestMatchers("/login", "/api/v1/usuario/crear-usuario")
+                .requestMatchers("/login","/primer-factor", "/api/v1/usuario/crear-usuario")
                 .anonymous()
                 .anyRequest()
                 .authenticated()
