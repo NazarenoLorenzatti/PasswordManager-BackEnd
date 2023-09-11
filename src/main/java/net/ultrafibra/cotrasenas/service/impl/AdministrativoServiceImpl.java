@@ -8,6 +8,7 @@ import net.ultrafibra.cotrasenas.dao.iAdministrativoDao;
 import net.ultrafibra.cotrasenas.model.Administrativo;
 import net.ultrafibra.cotrasenas.response.AdministrativoResponseRest;
 import net.ultrafibra.cotrasenas.service.iAdministrativoService;
+import net.ultrafibra.cotrasenas.util.ImgCompressor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,8 @@ public class AdministrativoServiceImpl implements iAdministrativoService {
         try {
             Optional<Administrativo> administrativoOptional = administrativoDao.findById(idAdministrativo);
             if (administrativoOptional.isPresent()) {
+                byte[] imagenDescomprimida = ImgCompressor.decompressZLib(administrativoOptional.get().getUsuario().getImgPerfil());
+                administrativoOptional.get().getUsuario().setImgPerfil(imagenDescomprimida);
                 listaAdministrativos.add(administrativoOptional.get());
                 respuesta.getAdministrativoResponse().setAdministrativo(listaAdministrativos);
                 respuesta.setMetadata("Respuesta ok", "00", "Administrativo encontrado");

@@ -23,7 +23,7 @@ public class JwtUtil {
 	}
 
         public String encode(String subject) {
-            Date vencimiento =  new Date(System.currentTimeMillis() + 1800000);
+            Date vencimiento =  new Date(System.currentTimeMillis() + 3600000);
             this.expiresDate = vencimiento.toString();
 		return JWT.create()
 				.withSubject(subject)

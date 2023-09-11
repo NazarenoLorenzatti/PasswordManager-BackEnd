@@ -1,11 +1,13 @@
 package net.ultrafibra.cotrasenas.controller;
 
+import java.io.IOException;
 import net.ultrafibra.cotrasenas.model.Usuario;
 import net.ultrafibra.cotrasenas.response.UsuarioResponseRest;
 import net.ultrafibra.cotrasenas.service.impl.UsuarioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:4200"})
@@ -66,42 +68,58 @@ public class UsuarioRestController {
         ResponseEntity<UsuarioResponseRest> respuesta = usuarioService.buscarUsuarioPorId(id);
         return respuesta;
     }
-    
+
     /**
      * Eliminar Usuario por ID
-     * 
+     *
      * @param id
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     @DeleteMapping("/eliminar-usuario/{id}")
     public ResponseEntity<UsuarioResponseRest> eliminarUsuario(@PathVariable Long id) throws Exception {
         ResponseEntity<UsuarioResponseRest> respuesta = usuarioService.eliminarUsuarioPorId(id);
         return respuesta;
     }
+
     /**
      * Eliminar usuario
-     * 
+     *
      * @param usuario
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     @DeleteMapping("/eliminar-usuario")
     public ResponseEntity<UsuarioResponseRest> eliminarUsuario(@RequestBody Usuario usuario) throws Exception {
         ResponseEntity<UsuarioResponseRest> respuesta = usuarioService.eliminarUsuario(usuario);
         return respuesta;
     }
-    
+
     /**
      * Listar todos los Usuarios
-     * 
+     *
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     @GetMapping("/listar-usuarios")
-        public ResponseEntity<UsuarioResponseRest> listarUsuarios() throws Exception {
+    public ResponseEntity<UsuarioResponseRest> listarUsuarios() throws Exception {
         ResponseEntity<UsuarioResponseRest> respuesta = usuarioService.listarUsuarios();
         return respuesta;
     }
-    
+
+    /**
+     *Subir foto de perfil
+     * 
+     * @param username
+     * @param imagen
+     * @return
+     * @throws IOException
+     */
+    @PostMapping("/subir-foto-perfil")
+    public ResponseEntity<UsuarioResponseRest> subirFoto(@RequestParam("username") String username,
+            @RequestParam("img") MultipartFile imagen) throws IOException {
+        ResponseEntity<UsuarioResponseRest> respuesta = usuarioService.subirFoto(username, imagen.getBytes());
+        return respuesta;
+    }
+
 }

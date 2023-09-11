@@ -8,6 +8,7 @@ import net.ultrafibra.cotrasenas.model.Rol;
 import net.ultrafibra.cotrasenas.model.Usuario;
 import net.ultrafibra.cotrasenas.response.UsuarioResponseRest;
 import net.ultrafibra.cotrasenas.service.iUsuarioService;
+import net.ultrafibra.cotrasenas.util.ImgCompressor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -193,4 +194,29 @@ public class UsuarioServiceImpl implements iUsuarioService {
         }
         return new ResponseEntity<UsuarioResponseRest>(respuesta, HttpStatus.OK);
     }
+
+    @Override 
+    @Transactional
+    public ResponseEntity<UsuarioResponseRest> subirFoto(String username, byte[] img) {
+        UsuarioResponseRest respuesta = new UsuarioResponseRest();
+        List<Usuario> listaUsuarios = new ArrayList<>();
+        try {
+            Usuario usuarioEncontrado = usuarioDao.findByUsername(username);
+            if (usuarioEncontrado != null) {
+                usuarioEncontrado.setImgPerfil(ImgCompressor.compressZLib(img));
+                listaUsuarios.add(usuarioDao.save(usuarioEncontrado));                
+                respuesta.getUsuarioResponse().setUsuario(listaUsuarios);
+                respuesta.setMetadata("Respuesta ok", "00", "Imagen subida correctamente");
+            } else {
+                respuesta.setMetadata("Respuesta nok", "-1", "No se encontro el usuario");
+                return new ResponseEntity<>(respuesta, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            respuesta.setMetadata("Respuesta nok", "-1", "Error al subir la imagen");
+            e.getStackTrace();
+            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(respuesta, HttpStatus.OK);
+    }
+
 }

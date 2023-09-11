@@ -26,6 +26,13 @@ public class Usuario implements Serializable {
 
     @NotEmpty
     private Integer pin;
+    
+    @Column(name="img_perfil", length = 1000)
+    private byte[] imgPerfil;
+    
+    @OneToOne(mappedBy = "usuario")
+    @JsonIgnore
+    private Administrativo administrativo;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
@@ -35,9 +42,7 @@ public class Usuario implements Serializable {
     )
     private List<Rol> roles;
 
-    @OneToOne(mappedBy = "usuario")
-    @JsonIgnore
-    private Administrativo administrativo;
+
 
     public Usuario(String username, String password, List<Rol> roles) {
         this.username = username;
