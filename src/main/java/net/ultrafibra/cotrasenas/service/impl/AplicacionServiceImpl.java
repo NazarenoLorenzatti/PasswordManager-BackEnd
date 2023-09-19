@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import net.ultrafibra.cotrasenas.dao.iAdministrativoDao;
 import net.ultrafibra.cotrasenas.dao.iAplicacionDao;
+import net.ultrafibra.cotrasenas.dao.iUsuarioDao;
+import net.ultrafibra.cotrasenas.model.Administrativo;
 import net.ultrafibra.cotrasenas.model.Aplicacion;
 import net.ultrafibra.cotrasenas.response.AplicacionResponseRest;
 import net.ultrafibra.cotrasenas.service.iAplicacionService;
@@ -20,6 +23,12 @@ public class AplicacionServiceImpl implements iAplicacionService {
 
     @Autowired
     private iAplicacionDao aplicacionDao;
+    
+    @Autowired
+    private iAdministrativoDao administrativoDao;
+    
+    @Autowired
+    private iUsuarioDao usuarioDao;
 
     @Override
     @Transactional(readOnly = true)
@@ -62,12 +71,15 @@ public class AplicacionServiceImpl implements iAplicacionService {
 
     @Override
     @Transactional
-    public ResponseEntity<AplicacionResponseRest> guardarAplicacion(Aplicacion aplicacion) {
+    public ResponseEntity<AplicacionResponseRest> guardarAplicacion(Aplicacion aplicacion, String username) {
         AplicacionResponseRest respuesta = new AplicacionResponseRest();
         List<Aplicacion> listaAplicaciones = new ArrayList<>();
         try {
+            List<Administrativo> listAdm = new ArrayList<>();
+            listAdm.add(administrativoDao.findByUsuario(usuarioDao.findByUsername(username)).get());
+            aplicacion.setAdministrativos(listAdm);
             Aplicacion aplicacionGuardada = aplicacionDao.save(aplicacion);
-            if (aplicacionGuardada != null) {
+            if (aplicacionGuardada != null) {         
                 listaAplicaciones.add(aplicacionGuardada);
                 respuesta.getAplicacionResponse().setAplicacion(listaAplicaciones);
                 respuesta.setMetadata("Respuesta ok", "00", "Aplicacion Guardada");

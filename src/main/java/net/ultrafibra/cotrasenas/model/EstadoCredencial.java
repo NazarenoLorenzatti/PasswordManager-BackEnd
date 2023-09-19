@@ -17,6 +17,6 @@ public class EstadoCredencial implements Serializable {
     private Long idEstado;
     
     @Column(name = "nombre_credencial")
-    private String nombreCredencial;
+    private String nombreEstado;
     
 }

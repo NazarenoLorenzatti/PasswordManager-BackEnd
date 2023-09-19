@@ -22,9 +22,9 @@ public class AplicacionRestController {
      * @return
      * @throws Exception
      */
-    @PostMapping("/guardar-aplicacion")
-    public ResponseEntity<AplicacionResponseRest> guardarAplicacion(@RequestBody Aplicacion aplicacion) throws Exception {
-        ResponseEntity<AplicacionResponseRest> respuesta = aplicacionService.guardarAplicacion(aplicacion);
+    @PostMapping("/guardar-aplicacion/{username}")
+    public ResponseEntity<AplicacionResponseRest> guardarAplicacion(@RequestBody Aplicacion aplicacion, @PathVariable String username) throws Exception {
+        ResponseEntity<AplicacionResponseRest> respuesta = aplicacionService.guardarAplicacion(aplicacion, username);
         return respuesta;
     }
 

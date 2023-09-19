@@ -5,13 +5,16 @@ import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import net.ultrafibra.cotrasenas.dao.iAdministrativoDao;
+import net.ultrafibra.cotrasenas.dao.iUsuarioDao;
 import net.ultrafibra.cotrasenas.model.Administrativo;
+import net.ultrafibra.cotrasenas.model.Usuario;
 import net.ultrafibra.cotrasenas.response.AdministrativoResponseRest;
 import net.ultrafibra.cotrasenas.service.iAdministrativoService;
 import net.ultrafibra.cotrasenas.util.ImgCompressor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,8 +22,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AdministrativoServiceImpl implements iAdministrativoService {
 
+        @Autowired
+    private iUsuarioDao usuarioDao;
+        
     @Autowired
     private iAdministrativoDao administrativoDao;
+    
+        @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
@@ -48,6 +57,7 @@ public class AdministrativoServiceImpl implements iAdministrativoService {
             if (administrativoOptional.isPresent()) {
                 byte[] imagenDescomprimida = ImgCompressor.decompressZLib(administrativoOptional.get().getUsuario().getImgPerfil());
                 administrativoOptional.get().getUsuario().setImgPerfil(imagenDescomprimida);
+                
                 listaAdministrativos.add(administrativoOptional.get());
                 respuesta.getAdministrativoResponse().setAdministrativo(listaAdministrativos);
                 respuesta.setMetadata("Respuesta ok", "00", "Administrativo encontrado");
@@ -84,6 +94,7 @@ public class AdministrativoServiceImpl implements iAdministrativoService {
         AdministrativoResponseRest respuesta = new AdministrativoResponseRest();
         List<Administrativo> listaAdministrativos = new ArrayList<>();
         try {
+            administrativo.setUsuario(usuarioDao.findByUsername(administrativo.getUsuario().getUsername()));
             Administrativo administrativoGuardado = administrativoDao.save(administrativo);
             if (administrativoGuardado != null) {
                 listaAdministrativos.add(administrativoGuardado);
@@ -147,6 +158,9 @@ public class AdministrativoServiceImpl implements iAdministrativoService {
         try {
             Optional<Administrativo> administrativoOptional = administrativoDao.findById(administrativo.getIdAdministrativo());
             if (administrativoOptional.isPresent()) {
+                byte[] imagenDescomprimida = ImgCompressor.decompressZLib(administrativoOptional.get().getUsuario().getImgPerfil());
+                administrativoOptional.get().getUsuario().setImgPerfil(imagenDescomprimida);
+                
                 listaAdministrativos.add(administrativoOptional.get());
                 respuesta.getAdministrativoResponse().setAdministrativo(listaAdministrativos);
                 respuesta.setMetadata("Respuesta ok", "00", "Administrativo encontrado");
@@ -162,5 +176,32 @@ public class AdministrativoServiceImpl implements iAdministrativoService {
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
         
     }
+
+    @Override
+    public ResponseEntity<AdministrativoResponseRest> buscarAdministrativoPorUsuario(Usuario usuario) {
+         AdministrativoResponseRest respuesta = new AdministrativoResponseRest();
+        List<Administrativo> listaAdministrativos = new ArrayList<>();
+        try {
+           Optional<Administrativo> administrativoOptional = administrativoDao.findByUsuario(usuarioDao.findByUsername(usuario.getUsername()));
+            if (administrativoOptional.isPresent()) {
+                if(administrativoOptional.get().getUsuario().getImgPerfil() != null){
+                     byte[] imagenDescomprimida = ImgCompressor.decompressZLib(administrativoOptional.get().getUsuario().getImgPerfil());
+                     administrativoOptional.get().getUsuario().setImgPerfil(imagenDescomprimida);
+                }                            
+                listaAdministrativos.add(administrativoOptional.get());
+                respuesta.getAdministrativoResponse().setAdministrativo(listaAdministrativos);
+                respuesta.setMetadata("Respuesta ok", "00", "Administrativo encontrado");
+            } else {
+                respuesta.setMetadata("Respuesta nok", "-1", "No se encontro el Administrativo");
+                return new ResponseEntity<>(respuesta, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            respuesta.setMetadata("Respuesta nok", "-1", "Error al consultar");
+            e.getStackTrace();
+            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(respuesta, HttpStatus.OK);
+        
+    }       
 
 }

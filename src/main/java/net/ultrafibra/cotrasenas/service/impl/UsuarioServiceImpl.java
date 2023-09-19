@@ -9,6 +9,7 @@ import net.ultrafibra.cotrasenas.model.Usuario;
 import net.ultrafibra.cotrasenas.response.UsuarioResponseRest;
 import net.ultrafibra.cotrasenas.service.iUsuarioService;
 import net.ultrafibra.cotrasenas.util.ImgCompressor;
+import net.ultrafibra.cotrasenas.util.PasswordGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,9 @@ public class UsuarioServiceImpl implements iUsuarioService {
 
     @Autowired
     private iRolesDao rolesDao;
+    
+     @Autowired
+    private PasswordGeneratorService passwordGenerator;
 
     public static String encriptarPassword(String password) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -93,7 +97,7 @@ public class UsuarioServiceImpl implements iUsuarioService {
                     }
                 }               
                 usuario.setRoles(roles);
-                Usuario usuarioGuardado = usuarioDao.save(new Usuario(usuario.getUsername(), usuario.getPassword(), roles));
+                Usuario usuarioGuardado = usuarioDao.save(new Usuario(usuario.getUsername(), usuario.getPassword(), passwordGenerator.generarPin(), roles));
                 if (usuarioGuardado != null) {
                     listaUsuarios.add(usuarioGuardado);
                     respuesta.getUsuarioResponse().setUsuario(listaUsuarios);

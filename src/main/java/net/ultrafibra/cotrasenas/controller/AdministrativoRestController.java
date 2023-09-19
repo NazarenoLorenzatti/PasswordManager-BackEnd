@@ -1,6 +1,7 @@
 package net.ultrafibra.cotrasenas.controller;
 
 import net.ultrafibra.cotrasenas.model.Administrativo;
+import net.ultrafibra.cotrasenas.model.Usuario;
 import net.ultrafibra.cotrasenas.response.AdministrativoResponseRest;
 import net.ultrafibra.cotrasenas.service.impl.AdministrativoServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,8 @@ public class AdministrativoRestController {
     }
 
     /**
-     *Editar informacion del administrativo
-     * 
+     * Editar informacion del administrativo
+     *
      * @param administrativo
      * @return
      * @throws Exception
@@ -53,6 +54,19 @@ public class AdministrativoRestController {
         ResponseEntity<AdministrativoResponseRest> respuesta = administrativoService.buscarAdministrativoPorId(id);
         return respuesta;
     }
+    
+    /**
+     * Buscar Administrativo en base al usuario
+     * 
+     * @param usuario
+     * @return
+     * @throws Exception 
+     */
+    @PostMapping("/buscar-administrativo-usuario")
+    public ResponseEntity<AdministrativoResponseRest> buscarAdministrativoPorusuario(@RequestBody Usuario usuario) throws Exception {
+        ResponseEntity<AdministrativoResponseRest> respuesta = administrativoService.buscarAdministrativoPorUsuario(usuario);
+        return respuesta;
+    }
 
     /**
      * Buscar administrativo por ID metodo Post
@@ -66,25 +80,25 @@ public class AdministrativoRestController {
         ResponseEntity<AdministrativoResponseRest> respuesta = administrativoService.buscarAdministrativo(administrativo);
         return respuesta;
     }
-    
+
     /**
      * Eliminar administrativo por ID
-     * 
+     *
      * @param id
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     @DeleteMapping("/eliminar-administrativo/{id}")
     public ResponseEntity<AdministrativoResponseRest> eliminarAdministrativo(@PathVariable Long id) throws Exception {
         ResponseEntity<AdministrativoResponseRest> respuesta = administrativoService.eliminarAdministrativo(id);
         return respuesta;
     }
-    
+
     /**
      * Listar todos los administrativos guardados
-     * 
+     *
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     @GetMapping("/listar-administrativos")
     public ResponseEntity<AdministrativoResponseRest> listarAdministrativos() throws Exception {

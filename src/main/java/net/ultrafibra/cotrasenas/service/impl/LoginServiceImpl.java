@@ -57,12 +57,9 @@ public class LoginServiceImpl implements iLoginService {
                 usuario.setPin(passwordGenerator.generarPin());
                 usuario = usuarioDao.save(usuario);
 
-                System.out.println("EMAIL = " + usuario.getAdministrativo().getEmail());
-                System.out.println("TELEFONO = " + usuario.getAdministrativo().getTelefono());
-
-                smsService.enviarMensaje("PIN > " + usuario.getPin(), usuario.getAdministrativo().getTelefono());
-//                emailService.enviarEmail(usuario.getUsername(), "PIN PAR AUTENTICAR", usuario.getPin().toString());
-
+                smsService.enviarMensaje("Este es su Pin para ingresar al gestor de contraseñas:"
+                        + " " + usuario.getPin(), usuario.getAdministrativo().getTelefono());
+                emailService.enviarMail(usuario.getAdministrativo().getEmail(), "PIN PAR AUTENTICAR", usuario.getPin().toString());
                 respuesta.setMetadata("Respuesta ok", "00", "Login correcto");
                 return new ResponseEntity<>(respuesta, HttpStatus.OK);
             } else {
