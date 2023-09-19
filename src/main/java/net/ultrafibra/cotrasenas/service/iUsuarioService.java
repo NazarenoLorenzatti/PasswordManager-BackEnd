@@ -12,7 +12,7 @@ public interface iUsuarioService {
    public ResponseEntity<UsuarioResponseRest> guardarUsuario(Usuario usuario);
    public ResponseEntity<UsuarioResponseRest> actualizarUsuario(Usuario usuario);
    public ResponseEntity<UsuarioResponseRest> eliminarUsuario(Usuario usuario);
-   public ResponseEntity<UsuarioResponseRest> eliminarUsuarioPorId(Long idUsuario);
-   
+   public ResponseEntity<UsuarioResponseRest> eliminarUsuarioPorId(Long idUsuario);  
+   public ResponseEntity<UsuarioResponseRest> subirFoto(String username, byte[] img);
    
 }

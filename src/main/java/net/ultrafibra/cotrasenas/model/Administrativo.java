@@ -2,6 +2,7 @@ package net.ultrafibra.cotrasenas.model;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 import lombok.Data;
 import net.ultrafibra.cotrasenas.model.Usuario;
 
@@ -28,6 +29,14 @@ public class Administrativo implements Serializable {
     @OneToOne
     @JoinColumn(name = "usuario_id_usuario")
     private Usuario usuario;
+    
+     @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "administrativos_has_aplicaciones",
+            joinColumns = @JoinColumn(name = "administrativos_id_administrativo"),
+            inverseJoinColumns = @JoinColumn(name = "aplicaciones_id_aplicacion")
+    )
+     private List<Aplicacion> aplicaciones;
     
      public Administrativo() {
     }

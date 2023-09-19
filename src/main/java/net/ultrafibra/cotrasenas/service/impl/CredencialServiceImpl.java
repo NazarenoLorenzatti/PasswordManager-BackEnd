@@ -9,11 +9,14 @@ import net.ultrafibra.cotrasenas.dao.*;
 import net.ultrafibra.cotrasenas.excepciones.*;
 import net.ultrafibra.cotrasenas.model.Administrativo;
 import net.ultrafibra.cotrasenas.model.Credencial;
+import net.ultrafibra.cotrasenas.model.Password;
 import net.ultrafibra.cotrasenas.response.CredencialResponseRest;
+import net.ultrafibra.cotrasenas.response.PasswordResponseRest;
 import net.ultrafibra.cotrasenas.service.iCredencialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +38,9 @@ public class CredencialServiceImpl implements iCredencialService {
 
     @Autowired
     private SMSService smsService;
+
+    @Autowired
+    private PasswordGeneratorService passwordGenerator;
 
     @Override
     @Transactional(readOnly = true)
@@ -81,7 +87,7 @@ public class CredencialServiceImpl implements iCredencialService {
         CredencialResponseRest respuesta = new CredencialResponseRest();
         List<Credencial> listaCredenciales = new ArrayList<>();
         try {
-            credencial.setEstadoCredencial(estadoDao.findByNombreCredencial("VIGENTE"));
+            credencial.setEstadoCredencial(estadoDao.findByNombreEstado("VIGENTE"));
             credencial.setUltimaActualizacion(Date.valueOf(LocalDate.now()));
             credencial.setProximaActualizacion(Date.valueOf(LocalDate.now().plusDays(60)));
             Credencial credencialNueva = credencialDao.save(credencial);
@@ -112,7 +118,7 @@ public class CredencialServiceImpl implements iCredencialService {
 
                 credencialOptional.get().setUsuario(credencial.getUsuario());
                 credencialOptional.get().setContra(credencial.getContra());
-                credencialOptional.get().setEstadoCredencial(estadoDao.findByNombreCredencial("VIGENTE"));
+                credencialOptional.get().setEstadoCredencial(estadoDao.findByNombreEstado("VIGENTE"));
                 credencialOptional.get().setUltimaActualizacion(Date.valueOf(LocalDate.now()));
                 credencialOptional.get().setProximaActualizacion(Date.valueOf(LocalDate.now().plusDays(60)));
 
@@ -147,7 +153,7 @@ public class CredencialServiceImpl implements iCredencialService {
             if (credencialOptional.isPresent()) {
 
                 credencialOptional.get().setContra(credencial.getContra());
-                credencialOptional.get().setEstadoCredencial(estadoDao.findByNombreCredencial("VIGENTE"));
+                credencialOptional.get().setEstadoCredencial(estadoDao.findByNombreEstado("VIGENTE"));
                 credencialOptional.get().setUltimaActualizacion(Date.valueOf(LocalDate.now()));
                 credencialOptional.get().setProximaActualizacion(Date.valueOf(LocalDate.now().plusDays(60)));
 
@@ -196,11 +202,11 @@ public class CredencialServiceImpl implements iCredencialService {
         try {
             for (Credencial c : credenciales) {
                 if (c.getProximaActualizacion().before(c.getUltimaActualizacion())) {
-                    c.setEstadoCredencial(estadoDao.findByNombreCredencial("REQUIERE ACTUALIZACION"));
+                    c.setEstadoCredencial(estadoDao.findByNombreEstado("CAMBIAR"));
 
                     // ENVIO DE LA ALERTA POR MAIL
                     try {
-                        emailService.enviarEmail(c.getAdministrativo().getEmail(), "Actualizacion de Contraseña: " + c.getAplicacion().getNombreAplicacion(),
+                        emailService.enviarMail(c.getAdministrativo().getEmail(), "Actualizacion de Contraseña: " + c.getAplicacion().getNombreAplicacion(),
                                 "Su contraseña de la aplicacion " + c.getAplicacion().getNombreAplicacion() + " Requiere una actualizacion");
                     } catch (EmailException e) {
                         respuesta.setMetadata("Respuesta nok", "-1", "Error al enviar el correo electrónico.");
@@ -273,5 +279,44 @@ public class CredencialServiceImpl implements iCredencialService {
             return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<PasswordResponseRest> generarPassword() {
+        PasswordResponseRest respuesta = new PasswordResponseRest();
+        List<Password> passwords = new ArrayList<>();
+        try {
+            passwords.add(this.passwordGenerator.generarContraseña());
+            respuesta.getPasswordResponse().setPassword(passwords);
+            respuesta.setMetadata("Respuesta ok", "00", "Contraseña Generada");
+        } catch (Exception e) {
+            respuesta.setMetadata("Respuesta nok", "-1", "Error al generar contraseña");
+            e.getStackTrace();
+            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(respuesta, HttpStatus.OK);
+    }
+
+    @Scheduled(cron = "0 0 * * * *") // Ejecutar cada hora
+    public void comprobarVigencia() {
+        List<Credencial> credenciales = credencialDao.findAll();
+        for (Credencial c : credenciales) {
+            if (c.getEstadoCredencial().getNombreEstado().equals("VIGENTE")) {
+                if (c.getUltimaActualizacion().after(c.getProximaActualizacion())) {
+                    
+                    c.setEstadoCredencial(estadoDao.findByNombreEstado("CAMBIAR"));
+                    credencialDao.save(c);
+                    
+                    smsService.enviarMensaje("Sus credenciales de la APP: "+ c.getAplicacion().getNombreAplicacion() 
+                            + " Necesitan un cambio", c.getAdministrativo().getTelefono());
+                    
+                    emailService.enviarMail(c.getAdministrativo().getEmail(),"Cambiar credenciales "
+                            +  c.getAplicacion().getNombreAplicacion(),"Sus credenciales de la APP: "
+                                    + c.getAplicacion().getNombreAplicacion()+ " Necesitan un cambio");
+                    
+                    System.out.println("EJECUTADO" + LocalDate.now().toString());
+                }
+            }
+        }
     }
 }

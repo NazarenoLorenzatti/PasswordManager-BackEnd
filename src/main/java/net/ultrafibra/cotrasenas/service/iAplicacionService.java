@@ -12,7 +12,7 @@ public interface iAplicacionService {
     
     public ResponseEntity<AplicacionResponseRest> buscarAplicacionPorId(Long idAplicacion);
 
-    public ResponseEntity<AplicacionResponseRest> guardarAplicacion(Aplicacion aplicacion);
+    public ResponseEntity<AplicacionResponseRest> guardarAplicacion(Aplicacion aplicacion, String username);
 
     public ResponseEntity<AplicacionResponseRest> editarAplicacion(Aplicacion aplicacion);
 

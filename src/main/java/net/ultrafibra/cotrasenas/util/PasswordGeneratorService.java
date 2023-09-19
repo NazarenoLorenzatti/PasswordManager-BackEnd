@@ -19,7 +19,7 @@ public class PasswordGeneratorService {
     private static final String UPPER_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String LOWER_CHARACTERS = "abcdefghijklmnopqrstuvwxyz";
     private static final String NUMBERS = "0123456789";
-    private static final String SPECIAL_CHARACTERS = "!@#$%^&*()-_=+[]{}|;:,.<>?";
+    private static final String SPECIAL_CHARACTERS = "!@#$%&()=+.";
 
     @Transactional(readOnly = true)
     public ResponseEntity<PasswordResponseRest> generarPassword() {

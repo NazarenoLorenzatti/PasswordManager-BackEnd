@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface iEstadoCredencialDao extends JpaRepository<EstadoCredencial, Long>{
     
-    public EstadoCredencial findByNombreCredencial(String estadoCredencial);
+    public EstadoCredencial findByNombreEstado(String estadoCredencial);
 }
