@@ -24,7 +24,7 @@ public class EmailService {
         prop = new Properties();
         
         this.remitente = "alertas.ups.ultrafibra@gmail.com";
-        this.password = "spgsodpzqyxfqjxh";
+        this.password = "************";
           
         prop.put("mail.smtp.host", "smtp.gmail.com");
         prop.put("mail.smtp.ssl.trust", "smtp.gmail.com");
